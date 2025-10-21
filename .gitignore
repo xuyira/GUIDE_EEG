@@ -1,3 +1,16 @@
+__pycache__
+domainbed/facebook.py
+
+domainbed/data/*
+train_output/*
+domainbed/saved_feats/*
+
+other/
+*.Identifier
+GUIDE_SD_TI/
+assets/
+pretrain/data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
