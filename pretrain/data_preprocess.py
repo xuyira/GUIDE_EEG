@@ -123,7 +123,7 @@ def eegdata_preprocess(testsubj, dataset='bci2a', delay=15, embedding=64, device
     
     # ========== Step 1: 根据数据集选择数据路径 ==========
     if dataset == 'bci2a':
-        data_root = './pretrain/data/standard_2a_data/'
+        data_root = './data/standard_2a_data/'
         num_subjects = 9
         num_classes = 4
     elif dataset == 'bci2b':
@@ -143,22 +143,20 @@ def eegdata_preprocess(testsubj, dataset='bci2a', delay=15, embedding=64, device
         # 加载原始训练数据 (T - Training)
         train_file = data_root + f'A0{subj}T.mat'
         train_mat = scipy.io.loadmat(train_file)
-        data_T = train_mat['data']  # (channels, time_points, trials)
-        label_T = train_mat['label']  # (1, trials)
+        data_T = train_mat['data']  # (time_points, channels, trials)
+        label_T = train_mat['label']  # (trials, 1)
         
         # 加载原始测试数据 (E - Evaluation)
         test_file = data_root + f'A0{subj}E.mat'
         test_mat = scipy.io.loadmat(test_file)
-        data_E = test_mat['data']  # (channels, time_points, trials)
-        label_E = test_mat['label']  # (1, trials)
+        data_E = test_mat['data']  #  (time_points, channels, trials)
+        label_E = test_mat['label']  # (trials, 1)
         
-        # 转换维度: (channels, time_points, trials) -> (trials, time_points, channels)
-        data_T = np.transpose(data_T, (2, 1, 0))  # (trials, time_points, channels)
-        label_T = np.transpose(label_T)           # (trials, 1)
+        # 转换维度: (time_points, channels, trials) -> (trials, time_points, channels)
+        data_T = np.transpose(data_T, (2, 0, 1))  # (trials, time_points, channels)
         label_T = label_T.flatten()               # (trials,) - 改用 flatten 确保是 1D
         
-        data_E = np.transpose(data_E, (2, 1, 0))  # (trials, time_points, channels)
-        label_E = np.transpose(label_E)
+        data_E = np.transpose(data_E, (2, 0, 1))  # (trials, time_points, channels)
         label_E = label_E.flatten()               # (trials,) - 改用 flatten 确保是 1D
         
         # 根据 testsubj 划分
@@ -233,7 +231,7 @@ def eegdata_preprocess(testsubj, dataset='bci2a', delay=15, embedding=64, device
     test_label_tensor = torch.from_numpy(test_label).long().to(device)
     
     # ========== 完成 ==========
-    print(f'\n' + '=' * 80)
+    print('=' * 80)
     print(f'  训练数据: {train_img.shape}, dtype={train_img.dtype}, device={train_img.device}')
     print(f'  训练标签: {train_label_tensor.shape}, dtype={train_label_tensor.dtype}')
     print(f'  测试数据: {test_img.shape}, dtype={test_img.dtype}, device={test_img.device}')
