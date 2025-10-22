@@ -123,7 +123,7 @@ def eegdata_preprocess(testsubj, dataset='bci2a', delay=15, embedding=64, device
     
     # ========== Step 1: 根据数据集选择数据路径 ==========
     if dataset == 'bci2a':
-        data_root = './data/standard_2a_data/'
+        data_root = './pretrain/data/standard_2a_data/'
         num_subjects = 9
         num_classes = 4
     elif dataset == 'bci2b':
